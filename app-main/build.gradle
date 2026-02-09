@@ -1,0 +1,15 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':data')
+    implementation project(':web')
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    // Developer tools live here
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+}

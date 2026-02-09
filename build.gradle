@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    // We apply false so the plugin is available to sub-projects but not loaded here
+    id 'org.springframework.boot' version '3.5.10' apply false
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+allprojects {
+    group = 'com.fbaron'
+    version = '0.0.1-SNAPSHOT'
+
+    ext {
+        developerName = 'Ferney Estupiñán Barón'
+        developerEmail = 'ferney.estupinanb@gmail.com'
+        developerGithub = 'https://github.com/ferneybaron'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.10"
+        }
+    }
+
+    dependencies {
+        // Every module gets Lombok and Testing tools by default
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}

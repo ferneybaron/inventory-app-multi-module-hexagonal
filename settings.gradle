@@ -1,0 +1,6 @@
+rootProject.name = 'inventory-app-multi-module-hexagonal'
+
+include 'core'
+include 'data'
+include 'web'
+include 'app-main'

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: inventory-app-hexagonal
+
+  datasource:
+    url: jdbc:h2:mem:inventorydb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true # Ensures tables exist before data.sql runs
+
+server:
+  port: 8080
