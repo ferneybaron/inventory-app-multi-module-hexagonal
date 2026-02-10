@@ -12,6 +12,8 @@ import com.fbaron.ims.product.mapper.ProductDtoMapper;
 import com.fbaron.ims.product.usecase.GetProductUseCase;
 import com.fbaron.ims.product.usecase.RegisterProductUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,22 +33,23 @@ public class ProductRestAdapter {
     private final ProductDtoMapper productDtoMapper;
 
     @PostMapping
-    public ProductDto registerProduct(@RequestBody RegisterProductDto dto) {
+    public ResponseEntity<ProductDto> registerProduct(@RequestBody RegisterProductDto dto) {
         var product = productDtoMapper.toModel(dto);
         var registeredProduct = registerProductUseCase.register(product);
-        return productDtoMapper.toDto(registeredProduct);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productDtoMapper.toDto(registeredProduct));
     }
 
     @GetMapping
-    public List<ProductDto> getAll() {
+    public ResponseEntity<List<ProductDto>> getAll() {
         var products = getProductUseCase.getAll();
-        return productDtoMapper.toDto(products);
+        return ResponseEntity.ok(productDtoMapper.toDto(products));
     }
 
     @GetMapping("/{productId}")
-    public ProductDto getById(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductDto> getById(@PathVariable("productId") Long productId) {
         var product = getProductUseCase.getById(productId);
-        return productDtoMapper.toDto(product);
+        return ResponseEntity.ok(productDtoMapper.toDto(product));
     }
 
 }

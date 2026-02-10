@@ -1,5 +1,6 @@
 package com.fbaron.ims.inventory.service;
 
+import com.fbaron.ims.inventory.exception.InsufficientStockException;
 import com.fbaron.ims.inventory.model.InventoryMovement;
 import com.fbaron.ims.inventory.model.MovementType;
 import com.fbaron.ims.inventory.repository.InventoryMovementCommandRepository;
@@ -52,7 +53,7 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
         Integer currentBalance = calculateStock(productId);
 
         if (currentBalance < quantity) {
-            throw new RuntimeException("Cannot exit " + quantity + " units. Current balance is only " + currentBalance);
+            throw new InsufficientStockException("Cannot exit " + quantity + " units. Current balance is only " + currentBalance);
         }
 
         InventoryMovement movement = InventoryMovement.builder()

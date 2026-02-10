@@ -6,6 +6,7 @@ import com.fbaron.ims.inventory.mapper.InventoryMovementDtoMapper;
 import com.fbaron.ims.inventory.usecase.GetMovementUseCase;
 import com.fbaron.ims.inventory.usecase.RegisterMovementUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,13 +27,15 @@ public class InventoryRestAdapter {
     @PostMapping("/inbound")
     public ResponseEntity<InventoryMovementDto> addStock(@RequestBody RegisterInventoryMovementDto dto) {
         var registeredMovement = registerMovementUseCase.inbound(dto.productId(), dto.quantity(), dto.reason());
-        return ResponseEntity.ok(inventoryMovementDtoMapper.toDto(registeredMovement));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryMovementDtoMapper.toDto(registeredMovement));
     }
 
     @PostMapping("/outbound")
     public ResponseEntity<InventoryMovementDto> removeStock(@RequestBody RegisterInventoryMovementDto dto) {
         var registeredMovement = registerMovementUseCase.outbound(dto.productId(), dto.quantity(), dto.reason());
-        return ResponseEntity.ok(inventoryMovementDtoMapper.toDto(registeredMovement));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inventoryMovementDtoMapper.toDto(registeredMovement));
     }
 
     @GetMapping("/{productId}")
