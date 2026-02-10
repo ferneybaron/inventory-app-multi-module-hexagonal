@@ -4,7 +4,7 @@
  * Email: ferney.estupinanb@gmail.com
  * GitHub: https://github.com/ferneybaron
  */
-package com.fbaron.inventory.model;
+package com.fbaron.ims.product.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,14 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+
     private Long id;
     private String name;
     private String description;
     private Double price;
-    private Integer stockQuantity;
+    private String category;
 
-    // Logic: A domain model should be able to validate itself
-    public boolean hasStock(Integer requestedQuantity) {
-        return this.stockQuantity >= requestedQuantity;
-    }
 }

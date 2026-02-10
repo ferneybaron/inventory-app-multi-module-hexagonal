@@ -4,12 +4,12 @@
  * Email: ferney.estupinanb@gmail.com
  * GitHub: https://github.com/ferneybaron
  */
-package com.fbaron.inventory.usecase;
+package com.fbaron.ims.product.usecase;
 
-import com.fbaron.inventory.model.Product;
+import com.fbaron.ims.product.model.Product;
 
-import java.util.List;
+public interface RegisterProductUseCase {
 
-public interface GetInventoryUseCase {
-    List<Product> execute();
+    Product register(Product product);
+
 }
