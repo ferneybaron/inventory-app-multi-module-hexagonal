@@ -1,7 +1,14 @@
 # Modular Hexagonal Inventory System 🚀
 
-This project is a production-grade blueprint for building Java applications using **Modular Hexagonal Architecture**. 
+This project is a production-grade blueprint for building Java applications using **Modular Hexagonal Architecture**.
 It is designed to be framework-agnostic, highly testable, and scalable.
+
+## ✨ Features
+
+* **Product management** — Register and list products.
+* **Inventory movements** — Inbound (add stock) and outbound (remove stock) with reasons.
+* **Stock balance** — Get current stock per product.
+* **Modular hexagonal layout** — Core domain, data adapters, web adapters, and bootstrap kept strictly decoupled.
 
 ## 🏗️ Architectural Overview
 
@@ -22,9 +29,24 @@ The project is divided into four strictly decoupled Gradle modules:
 
 ## 🚀 How to Run
 
+**Prerequisites:** JDK 21.
+
 1. Clone the repository.
-2. Run `./gradlew :app-main:bootRun`.
-3. Access the API at: `http://localhost:8080/api/v1/products`.
+2. Run the application:
+   * **Linux / macOS:** `./gradlew :app-main:bootRun`
+   * **Windows:** `.\gradlew.bat :app-main:bootRun`
+3. Base URL: `http://localhost:8080`
+
+### API Endpoints
+
+| Resource     | Method | Path                              | Description                |
+|-------------|--------|-----------------------------------|----------------------------|
+| Products    | `POST` | `/api/v1/products`                | Register a product         |
+| Products    | `GET`  | `/api/v1/products`                | List all products          |
+| Products    | `GET`  | `/api/v1/products/{productId}`    | Get product by ID          |
+| Inventory   | `POST` | `/api/v1/inventories/inbound`     | Add stock (inbound)        |
+| Inventory   | `POST` | `/api/v1/inventories/outbound`    | Remove stock (outbound)    |
+| Inventory   | `GET`  | `/api/v1/inventories/{productId}` | Get stock balance for product |
 
 ---
 
