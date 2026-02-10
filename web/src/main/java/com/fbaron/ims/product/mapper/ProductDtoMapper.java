@@ -1,7 +1,7 @@
-package com.fbaron.ims.mapper;
+package com.fbaron.ims.product.mapper;
 
-import com.fbaron.ims.dto.ProductDto;
-import com.fbaron.ims.dto.RegisterProductDto;
+import com.fbaron.ims.product.dto.ProductDto;
+import com.fbaron.ims.product.dto.RegisterProductDto;
 import com.fbaron.ims.product.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -4,7 +4,7 @@
  * Email: ferney.estupinanb@gmail.com
  * GitHub: https://github.com/ferneybaron
  */
-package com.fbaron.ims.dto;
+package com.fbaron.ims.product.dto;
 
 public record ProductDto(
         Long id,

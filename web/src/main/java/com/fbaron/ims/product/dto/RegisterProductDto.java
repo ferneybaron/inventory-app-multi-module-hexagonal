@@ -1,4 +1,4 @@
-package com.fbaron.ims.dto;
+package com.fbaron.ims.product.dto;
 
 public record RegisterProductDto(
         String name,

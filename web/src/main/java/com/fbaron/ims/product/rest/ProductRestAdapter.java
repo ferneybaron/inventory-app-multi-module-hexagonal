@@ -4,11 +4,11 @@
  * Email: ferney.estupinanb@gmail.com
  * GitHub: https://github.com/ferneybaron
  */
-package com.fbaron.ims.rest;
+package com.fbaron.ims.product.rest;
 
-import com.fbaron.ims.dto.ProductDto;
-import com.fbaron.ims.dto.RegisterProductDto;
-import com.fbaron.ims.mapper.ProductDtoMapper;
+import com.fbaron.ims.product.dto.ProductDto;
+import com.fbaron.ims.product.dto.RegisterProductDto;
+import com.fbaron.ims.product.mapper.ProductDtoMapper;
 import com.fbaron.ims.product.usecase.GetProductUseCase;
 import com.fbaron.ims.product.usecase.RegisterProductUseCase;
 import lombok.RequiredArgsConstructor;
