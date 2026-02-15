@@ -5,7 +5,6 @@ import com.fbaron.ims.product.jdbc.mapper.ProductJdbcMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -23,8 +22,6 @@ public class ProductJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ProductJdbcMapper mapper;
-
-    private final RowMapper<ProductJdbcEntity> rowMapper = (rs, rowNum) -> mapper.toJdbcEntity(rs);
 
     public ProductJdbcEntity save(ProductJdbcEntity product) {
         if (product.getId() == null) {
@@ -59,14 +56,14 @@ public class ProductJdbcRepository {
     public List<ProductJdbcEntity> findAll() {
         return jdbcTemplate.query(
                 "SELECT id, name, description, price, category FROM products",
-                rowMapper
+                (rs, rowNum) -> mapper.toJdbcEntity(rs)
         );
     }
 
     public Optional<ProductJdbcEntity> findById(Long id) {
         List<ProductJdbcEntity> products = jdbcTemplate.query(
                 "SELECT id, name, description, price, category FROM products WHERE id = ?",
-                rowMapper,
+                (rs, rowNum) -> mapper.toJdbcEntity(rs),
                 id
         );
         return products.stream().findFirst();
