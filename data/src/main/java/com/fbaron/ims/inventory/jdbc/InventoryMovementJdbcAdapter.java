@@ -6,11 +6,13 @@ import com.fbaron.ims.inventory.jdbc.repository.InventoryMovementJdbcRepository;
 import com.fbaron.ims.inventory.repository.InventoryMovementCommandRepository;
 import com.fbaron.ims.inventory.repository.InventoryMovementQueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
-@Profile("jdbc")
+@ConditionalOnProperty(name = "app.persistence.type", havingValue = "jdbc")
 @RequiredArgsConstructor
 public class InventoryMovementJdbcAdapter implements
         InventoryMovementQueryRepository,
@@ -27,12 +29,12 @@ public class InventoryMovementJdbcAdapter implements
     }
 
     @Override
-    public Integer findTotalInputs(Long productId) {
+    public Integer findTotalInputs(UUID productId) {
         return jdbcRepository.findTotalInputs(productId);
     }
 
     @Override
-    public Integer findTotalOutputs(Long productId) {
+    public Integer findTotalOutputs(UUID productId) {
         return jdbcRepository.findTotalOutputs(productId);
     }
 }

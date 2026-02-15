@@ -6,13 +6,14 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 @Component
 public class ProductJdbcMapper {
 
     public ProductJdbcEntity toJdbcEntity(ResultSet rs) throws SQLException {
         return ProductJdbcEntity.builder()
-                .id(rs.getLong("id"))
+                .id(rs.getObject("id", java.util.UUID.class))
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
                 .price(rs.getBigDecimal("price"))
@@ -40,7 +41,7 @@ public class ProductJdbcMapper {
                 .build();
     }
 
-    public ProductJdbcEntity withId(ProductJdbcEntity source, Long id) {
+    public ProductJdbcEntity withId(ProductJdbcEntity source, UUID id) {
         return ProductJdbcEntity.builder()
                 .id(id)
                 .name(source.getName())

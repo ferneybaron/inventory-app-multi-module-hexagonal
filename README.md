@@ -39,12 +39,27 @@ The project is divided into four strictly decoupled Gradle modules:
 
 ### Persistence Adapter Selection
 
-By default, the app uses the **JPA adapter**.
+The datasource adapter is selected by `app.persistence.type`:
 
-To run using the **JDBC adapter** instead, activate the `jdbc` Spring profile:
+* `jpa` (default)
+* `jdbc`
+* `mongo`
 
-* Linux / macOS: `./gradlew :app-main:bootRun --args='--spring.profiles.active=jdbc'`
-* Windows: `.\gradlew.bat :app-main:bootRun --args="--spring.profiles.active=jdbc"`
+Default behavior:
+
+* If not set, `app.persistence.type` defaults to `jpa`.
+* `application-jdbc.yaml` sets it to `jdbc`.
+* `application-mongo.yaml` sets it to `mongo`.
+
+Recommended strategy with environment profiles (`develop`, `prod`, `release`):
+
+* Keep environment as Spring profile.
+* Select persistence with `APP_PERSISTENCE_TYPE`.
+
+Examples:
+
+* Linux / macOS: `APP_PERSISTENCE_TYPE=jdbc ./gradlew :app-main:bootRun --args='--spring.profiles.active=develop'`
+* Linux / macOS: `APP_PERSISTENCE_TYPE=mongo ./gradlew :app-main:bootRun --args='--spring.profiles.active=prod'`
 
 ### API Endpoints
 

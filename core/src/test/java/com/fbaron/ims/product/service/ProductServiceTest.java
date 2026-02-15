@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +31,7 @@ class ProductServiceTest {
     @Test
     void registerDelegatesToCommandRepository() {
         Product product = Product.builder().name("Keyboard").build();
-        Product savedProduct = Product.builder().id(1L).name("Keyboard").build();
+        Product savedProduct = Product.builder().id(UUID.randomUUID()).name("Keyboard").build();
         when(productCommandRepository.save(product)).thenReturn(savedProduct);
 
         Product result = productService.register(product);
@@ -41,13 +42,14 @@ class ProductServiceTest {
 
     @Test
     void getByIdThrowsWhenProductIsMissing() {
-        when(productQueryRepository.findById(999L)).thenReturn(Optional.empty());
+        UUID productId = UUID.randomUUID();
+        when(productQueryRepository.findById(productId)).thenReturn(Optional.empty());
 
         ProductNotFoundException exception = assertThrows(
                 ProductNotFoundException.class,
-                () -> productService.getById(999L)
+                () -> productService.getById(productId)
         );
 
-        assertEquals("Product not found with ID: 999", exception.getMessage());
+        assertEquals("Product not found with ID: " + productId, exception.getMessage());
     }
 }

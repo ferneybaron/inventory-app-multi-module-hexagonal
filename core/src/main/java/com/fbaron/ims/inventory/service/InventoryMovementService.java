@@ -14,6 +14,7 @@ import com.fbaron.ims.product.repository.ProductQueryRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class InventoryMovementService implements RegisterMovementUseCase, GetMovementUseCase {
@@ -23,7 +24,7 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
     private final InventoryMovementQueryRepository movementQuery;
 
     @Override
-    public InventoryMovement inbound(Long productId, Integer quantity, String reason) {
+    public InventoryMovement inbound(UUID productId, Integer quantity, String reason) {
         validateQuantity(quantity);
 
         Product product = productQuery.findById(productId)
@@ -42,7 +43,7 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
 
 
     @Override
-    public InventoryMovement outbound(Long productId, Integer quantity, String reason) {
+    public InventoryMovement outbound(UUID productId, Integer quantity, String reason) {
         validateQuantity(quantity);
 
         Product product = productQuery.findById(productId)
@@ -65,7 +66,7 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
         return movementCommand.save(movement);
     }
 
-    public Integer calculateStock(Long productId) {
+    public Integer calculateStock(UUID productId) {
         productQuery.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 

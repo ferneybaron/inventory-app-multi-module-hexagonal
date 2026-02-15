@@ -4,10 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.UUID;
+
 public record RegisterInventoryMovementDto(
         @NotNull(message = "Product id is required")
-        @Positive(message = "Product id must be positive")
-        Long productId,
+        UUID productId,
         @NotNull(message = "Quantity is required")
         @Positive(message = "Quantity must be greater than zero")
         Integer quantity,

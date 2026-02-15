@@ -7,6 +7,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+
+    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly 'com.h2database:h2'
 }

@@ -15,6 +15,7 @@ import com.fbaron.ims.product.usecase.RegisterProductUseCase;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ProductService implements RegisterProductUseCase, GetProductUseCase {
@@ -33,7 +34,7 @@ public class ProductService implements RegisterProductUseCase, GetProductUseCase
     }
 
     @Override
-    public Product getById(Long id) {
+    public Product getById(UUID id) {
         return productQueryRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }

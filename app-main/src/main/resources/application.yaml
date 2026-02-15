@@ -3,17 +3,15 @@ spring:
     name: inventory-app-hexagonal
 
   datasource:
-    url: jdbc:h2:mem:inventorydb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${DATABASE_HOST:127.0.0.1}:${DATABASE_PORT:5432}/${DATABASE_NAME:inventorydb}?currentSchema=${SCHEMA_NAME:public}&ssl=false
+    username: ${DATABASE_USERNAME:mup-username}
+    password: ${DATABASE_PASSWORD:mup-password}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 5
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -21,3 +19,7 @@ spring:
 
 server:
   port: 8080
+
+app:
+  persistence:
+    type: ${APP_PERSISTENCE_TYPE:jpa}

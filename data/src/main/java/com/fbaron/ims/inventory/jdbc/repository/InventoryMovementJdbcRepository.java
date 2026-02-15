@@ -4,18 +4,15 @@ import com.fbaron.ims.inventory.jdbc.entity.InventoryMovementJdbcEntity;
 import com.fbaron.ims.inventory.jdbc.mapper.InventoryMovementJdbcMapper;
 import com.fbaron.ims.inventory.model.MovementType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.Objects;
+import java.util.UUID;
 
 @Repository
-@Profile("jdbc")
+@ConditionalOnProperty(name = "app.persistence.type", havingValue = "jdbc")
 @RequiredArgsConstructor
 public class InventoryMovementJdbcRepository {
 
@@ -23,25 +20,28 @@ public class InventoryMovementJdbcRepository {
     private final InventoryMovementJdbcMapper mapper;
 
     public InventoryMovementJdbcEntity save(InventoryMovementJdbcEntity inventoryMovement) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        if (inventoryMovement.getId() == null) {
+            inventoryMovement = mapper.withId(inventoryMovement, UUID.randomUUID());
+        }
+
+        InventoryMovementJdbcEntity toSave = inventoryMovement;
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO inventory_movement (product_id, quantity, type, created_at, reason) VALUES (?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
+                    "INSERT INTO inventory_movement (id, product_id, quantity, type, created_at, reason) VALUES (?, ?, ?, ?, ?, ?)"
             );
-            ps.setLong(1, inventoryMovement.getProductId());
-            ps.setInt(2, inventoryMovement.getQuantity());
-            ps.setString(3, inventoryMovement.getType().name());
-            ps.setObject(4, inventoryMovement.getCreatedAt());
-            ps.setString(5, inventoryMovement.getReason());
+            ps.setObject(1, toSave.getId());
+            ps.setObject(2, toSave.getProductId());
+            ps.setInt(3, toSave.getQuantity());
+            ps.setString(4, toSave.getType().name());
+            ps.setObject(5, toSave.getCreatedAt());
+            ps.setString(6, toSave.getReason());
             return ps;
-        }, keyHolder);
+        });
 
-        Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        return mapper.withId(inventoryMovement, generatedId);
+        return toSave;
     }
 
-    public Integer findTotalInputs(Long productId) {
+    public Integer findTotalInputs(UUID productId) {
         Integer total = jdbcTemplate.queryForObject(
                 "SELECT COALESCE(SUM(quantity), 0) FROM inventory_movement WHERE product_id = ? AND type = ?",
                 Integer.class,
@@ -51,7 +51,7 @@ public class InventoryMovementJdbcRepository {
         return total != null ? total : 0;
     }
 
-    public Integer findTotalOutputs(Long productId) {
+    public Integer findTotalOutputs(UUID productId) {
         Integer total = jdbcTemplate.queryForObject(
                 "SELECT COALESCE(SUM(quantity), 0) FROM inventory_movement WHERE product_id = ? AND type = ?",
                 Integer.class,

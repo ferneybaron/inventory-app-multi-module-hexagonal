@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class InventoryMovementJdbcEntity {
 
-    private Long id;
-    private Long productId;
+    private UUID id;
+    private UUID productId;
     private Integer quantity;
     private MovementType type;
     private LocalDateTime createdAt;

@@ -1,7 +1,9 @@
 package com.fbaron.ims.inventory.usecase;
 
+import java.util.UUID;
+
 public interface GetMovementUseCase {
 
-    Integer calculateStock(Long productId);
+    Integer calculateStock(UUID productId);
 
 }

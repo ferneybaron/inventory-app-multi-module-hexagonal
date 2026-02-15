@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,9 +39,10 @@ class InventoryMovementServiceTest {
 
     @Test
     void inboundThrowsWhenQuantityIsInvalid() {
+        UUID productId = UUID.randomUUID();
         InvalidMovementQuantityException exception = assertThrows(
                 InvalidMovementQuantityException.class,
-                () -> inventoryMovementService.inbound(1L, 0, "restock")
+                () -> inventoryMovementService.inbound(productId, 0, "restock")
         );
 
         assertEquals("Movement quantity must be greater than zero. Received: 0", exception.getMessage());
@@ -49,14 +51,15 @@ class InventoryMovementServiceTest {
 
     @Test
     void outboundThrowsWhenStockIsInsufficient() {
-        Product product = Product.builder().id(1L).name("Mouse").build();
-        when(productQuery.findById(1L)).thenReturn(Optional.of(product));
-        when(movementQuery.findTotalInputs(1L)).thenReturn(5);
-        when(movementQuery.findTotalOutputs(1L)).thenReturn(4);
+        UUID productId = UUID.randomUUID();
+        Product product = Product.builder().id(productId).name("Mouse").build();
+        when(productQuery.findById(productId)).thenReturn(Optional.of(product));
+        when(movementQuery.findTotalInputs(productId)).thenReturn(5);
+        when(movementQuery.findTotalOutputs(productId)).thenReturn(4);
 
         assertThrows(
                 InsufficientStockException.class,
-                () -> inventoryMovementService.outbound(1L, 2, "sale")
+                () -> inventoryMovementService.outbound(productId, 2, "sale")
         );
 
         verify(movementCommand, never()).save(any());
@@ -64,13 +67,14 @@ class InventoryMovementServiceTest {
 
     @Test
     void outboundPersistsMovementWhenStockIsAvailable() {
-        Product product = Product.builder().id(1L).name("Mouse").build();
-        when(productQuery.findById(1L)).thenReturn(Optional.of(product));
-        when(movementQuery.findTotalInputs(1L)).thenReturn(10);
-        when(movementQuery.findTotalOutputs(1L)).thenReturn(3);
+        UUID productId = UUID.randomUUID();
+        Product product = Product.builder().id(productId).name("Mouse").build();
+        when(productQuery.findById(productId)).thenReturn(Optional.of(product));
+        when(movementQuery.findTotalInputs(productId)).thenReturn(10);
+        when(movementQuery.findTotalOutputs(productId)).thenReturn(3);
         when(movementCommand.save(any(InventoryMovement.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        InventoryMovement result = inventoryMovementService.outbound(1L, 4, "sale");
+        InventoryMovement result = inventoryMovementService.outbound(productId, 4, "sale");
 
         assertEquals(MovementType.OUTBOUND, result.getType());
         assertEquals(4, result.getQuantity());
@@ -80,22 +84,24 @@ class InventoryMovementServiceTest {
 
     @Test
     void calculateStockThrowsWhenProductDoesNotExist() {
-        when(productQuery.findById(404L)).thenReturn(Optional.empty());
+        UUID productId = UUID.randomUUID();
+        when(productQuery.findById(productId)).thenReturn(Optional.empty());
 
         assertThrows(
                 ProductNotFoundException.class,
-                () -> inventoryMovementService.calculateStock(404L)
+                () -> inventoryMovementService.calculateStock(productId)
         );
     }
 
     @Test
     void calculateStockReturnsInputsMinusOutputs() {
-        Product product = Product.builder().id(1L).name("Laptop").build();
-        when(productQuery.findById(1L)).thenReturn(Optional.of(product));
-        when(movementQuery.findTotalInputs(1L)).thenReturn(20);
-        when(movementQuery.findTotalOutputs(1L)).thenReturn(8);
+        UUID productId = UUID.randomUUID();
+        Product product = Product.builder().id(productId).name("Laptop").build();
+        when(productQuery.findById(productId)).thenReturn(Optional.of(product));
+        when(movementQuery.findTotalInputs(productId)).thenReturn(20);
+        when(movementQuery.findTotalOutputs(productId)).thenReturn(8);
 
-        Integer result = inventoryMovementService.calculateStock(1L);
+        Integer result = inventoryMovementService.calculateStock(productId);
 
         assertEquals(12, result);
     }

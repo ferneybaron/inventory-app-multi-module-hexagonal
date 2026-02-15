@@ -7,9 +7,10 @@
 package com.fbaron.ims.product.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record ProductDto(
-        Long id,
+        UUID id,
         String name,
         BigDecimal price,
         String description,

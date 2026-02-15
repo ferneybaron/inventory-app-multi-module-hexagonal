@@ -12,14 +12,15 @@ import com.fbaron.ims.product.model.Product;
 import com.fbaron.ims.product.repository.ProductCommandRepository;
 import com.fbaron.ims.product.repository.ProductQueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component // This allows Spring to find it during scanning
-@Profile("!jdbc")
+@ConditionalOnProperty(name = "app.persistence.type", havingValue = "jpa", matchIfMissing = true)
 @RequiredArgsConstructor
 public class ProductJpaAdapter implements ProductQueryRepository, ProductCommandRepository {
 
@@ -39,7 +40,7 @@ public class ProductJpaAdapter implements ProductQueryRepository, ProductCommand
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findById(UUID id) {
         return jpaRepository.findById(id).map(productJpaMapper::toModel);
     }
 

@@ -3,20 +3,17 @@ package com.fbaron.ims.product.jdbc.repository;
 import com.fbaron.ims.product.jdbc.entity.ProductJdbcEntity;
 import com.fbaron.ims.product.jdbc.mapper.ProductJdbcMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-@Profile("jdbc")
+@ConditionalOnProperty(name = "app.persistence.type", havingValue = "jdbc")
 @RequiredArgsConstructor
 public class ProductJdbcRepository {
 
@@ -25,21 +22,20 @@ public class ProductJdbcRepository {
 
     public ProductJdbcEntity save(ProductJdbcEntity product) {
         if (product.getId() == null) {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
+            product = mapper.withId(product, UUID.randomUUID());
+            ProductJdbcEntity finalProduct = product;
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO products (name, description, price, category) VALUES (?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
+                        "INSERT INTO products (id, name, description, price, category) VALUES (?, ?, ?, ?, ?)"
                 );
-                ps.setString(1, product.getName());
-                ps.setString(2, product.getDescription());
-                ps.setBigDecimal(3, product.getPrice());
-                ps.setString(4, product.getCategory());
+                ps.setObject(1, finalProduct.getId());
+                ps.setString(2, finalProduct.getName());
+                ps.setString(3, finalProduct.getDescription());
+                ps.setBigDecimal(4, finalProduct.getPrice());
+                ps.setString(5, finalProduct.getCategory());
                 return ps;
-            }, keyHolder);
-
-            Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-            return mapper.withId(product, generatedId);
+            });
+            return product;
         }
 
         jdbcTemplate.update(
@@ -60,7 +56,7 @@ public class ProductJdbcRepository {
         );
     }
 
-    public Optional<ProductJdbcEntity> findById(Long id) {
+    public Optional<ProductJdbcEntity> findById(UUID id) {
         List<ProductJdbcEntity> products = jdbcTemplate.query(
                 "SELECT id, name, description, price, category FROM products WHERE id = ?",
                 (rs, rowNum) -> mapper.toJdbcEntity(rs),

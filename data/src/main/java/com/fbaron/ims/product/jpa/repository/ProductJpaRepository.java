@@ -9,5 +9,7 @@ package com.fbaron.ims.product.jpa.repository;
 import com.fbaron.ims.product.jpa.entity.ProductJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, Long> {
+import java.util.UUID;
+
+public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, UUID> {
 }

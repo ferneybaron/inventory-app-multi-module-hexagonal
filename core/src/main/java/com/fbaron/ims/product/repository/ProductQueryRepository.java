@@ -10,6 +10,7 @@ import com.fbaron.ims.product.model.Product;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Specialized Port for read-only operations.
@@ -18,6 +19,6 @@ public interface ProductQueryRepository {
 
     List<Product> findAll();
 
-    Optional<Product> findById(Long id);
+    Optional<Product> findById(UUID id);
 
 }

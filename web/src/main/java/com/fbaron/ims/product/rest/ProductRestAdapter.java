@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class ProductRestAdapter {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDto> getById(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductDto> getById(@PathVariable("productId") UUID productId) {
         var product = getProductUseCase.getById(productId);
         return ResponseEntity.ok(productDtoMapper.toDto(product));
     }
