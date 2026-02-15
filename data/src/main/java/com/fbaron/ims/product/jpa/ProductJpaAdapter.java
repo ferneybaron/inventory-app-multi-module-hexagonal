@@ -12,14 +12,16 @@ import com.fbaron.ims.product.model.Product;
 import com.fbaron.ims.product.repository.ProductCommandRepository;
 import com.fbaron.ims.product.repository.ProductQueryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component // This allows Spring to find it during scanning
+@Profile("!jdbc")
 @RequiredArgsConstructor
-public class ProductRepositoryAdapter implements ProductQueryRepository, ProductCommandRepository {
+public class ProductJpaAdapter implements ProductQueryRepository, ProductCommandRepository {
 
     private final ProductJpaRepository jpaRepository;
     private final ProductJpaMapper productJpaMapper;

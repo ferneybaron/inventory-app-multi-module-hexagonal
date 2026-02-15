@@ -1,8 +1,8 @@
-package com.fbaron.ims.inventory.jpa;
+package com.fbaron.ims.inventory.jdbc;
 
-import com.fbaron.ims.inventory.jpa.mapper.InventoryMovementJpaMapper;
-import com.fbaron.ims.inventory.jpa.repository.InventoryMovementJpaRepository;
+import com.fbaron.ims.inventory.jdbc.mapper.InventoryMovementJdbcMapper;
 import com.fbaron.ims.inventory.model.InventoryMovement;
+import com.fbaron.ims.inventory.jdbc.repository.InventoryMovementJdbcRepository;
 import com.fbaron.ims.inventory.repository.InventoryMovementCommandRepository;
 import com.fbaron.ims.inventory.repository.InventoryMovementQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,29 +10,29 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!jdbc")
+@Profile("jdbc")
 @RequiredArgsConstructor
-public class InventoryMovementJpaAdapter implements
+public class InventoryMovementJdbcAdapter implements
         InventoryMovementQueryRepository,
         InventoryMovementCommandRepository {
 
-    private final InventoryMovementJpaRepository jpaRepository;
-    private final InventoryMovementJpaMapper jpaMapper;
+    private final InventoryMovementJdbcRepository jdbcRepository;
+    private final InventoryMovementJdbcMapper jdbcMapper;
 
     @Override
     public InventoryMovement save(InventoryMovement inventoryMovement) {
-        var jpaEntity = jpaMapper.toJpaEntity(inventoryMovement);
-        return jpaMapper.toModel(jpaRepository.save(jpaEntity));
+        var jdbcEntity = jdbcMapper.toJdbcEntity(inventoryMovement);
+        var savedJdbcEntity = jdbcRepository.save(jdbcEntity);
+        return jdbcMapper.toModel(savedJdbcEntity, inventoryMovement.getProduct());
     }
 
     @Override
     public Integer findTotalInputs(Long productId) {
-        return jpaRepository.findTotalInputs(productId);
+        return jdbcRepository.findTotalInputs(productId);
     }
 
     @Override
     public Integer findTotalOutputs(Long productId) {
-        return jpaRepository.findTotalOutPuts(productId);
+        return jdbcRepository.findTotalOutputs(productId);
     }
-
 }

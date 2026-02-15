@@ -37,6 +37,15 @@ The project is divided into four strictly decoupled Gradle modules:
    * **Windows:** `.\gradlew.bat :app-main:bootRun`
 3. Base URL: `http://localhost:8080`
 
+### Persistence Adapter Selection
+
+By default, the app uses the **JPA adapter**.
+
+To run using the **JDBC adapter** instead, activate the `jdbc` Spring profile:
+
+* Linux / macOS: `./gradlew :app-main:bootRun --args='--spring.profiles.active=jdbc'`
+* Windows: `.\gradlew.bat :app-main:bootRun --args="--spring.profiles.active=jdbc"`
+
 ### API Endpoints
 
 | Resource     | Method | Path                              | Description                |
