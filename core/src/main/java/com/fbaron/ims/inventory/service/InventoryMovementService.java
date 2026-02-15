@@ -1,6 +1,7 @@
 package com.fbaron.ims.inventory.service;
 
 import com.fbaron.ims.inventory.exception.InsufficientStockException;
+import com.fbaron.ims.inventory.exception.InvalidMovementQuantityException;
 import com.fbaron.ims.inventory.model.InventoryMovement;
 import com.fbaron.ims.inventory.model.MovementType;
 import com.fbaron.ims.inventory.repository.InventoryMovementCommandRepository;
@@ -8,6 +9,7 @@ import com.fbaron.ims.inventory.repository.InventoryMovementQueryRepository;
 import com.fbaron.ims.inventory.usecase.GetMovementUseCase;
 import com.fbaron.ims.inventory.usecase.RegisterMovementUseCase;
 import com.fbaron.ims.product.model.Product;
+import com.fbaron.ims.product.exception.ProductNotFoundException;
 import com.fbaron.ims.product.repository.ProductQueryRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -22,12 +24,10 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
 
     @Override
     public InventoryMovement inbound(Long productId, Integer quantity, String reason) {
-//        if (quantity <= 0) {
-//            throw new IllegalArgumentException("Inbound quantity must be greater than zero.");
-//        }
+        validateQuantity(quantity);
 
         Product product = productQuery.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         InventoryMovement movement = InventoryMovement.builder()
                 .product(product)
@@ -43,12 +43,10 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
 
     @Override
     public InventoryMovement outbound(Long productId, Integer quantity, String reason) {
-//        if (quantity <= 0) {
-//            throw new IllegalArgumentException("Inbound quantity must be greater than zero.");
-//        }
+        validateQuantity(quantity);
 
         Product product = productQuery.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         Integer currentBalance = calculateStock(productId);
 
@@ -68,6 +66,9 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
     }
 
     public Integer calculateStock(Long productId) {
+        productQuery.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
         Integer inputs = movementQuery.findTotalInputs(productId);
         Integer outputs = movementQuery.findTotalOutputs(productId);
 
@@ -76,7 +77,7 @@ public class InventoryMovementService implements RegisterMovementUseCase, GetMov
 
     private void validateQuantity(Integer quantity) {
         if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("Movement quantity must be greater than zero.");
+            throw new InvalidMovementQuantityException(quantity);
         }
     }
 

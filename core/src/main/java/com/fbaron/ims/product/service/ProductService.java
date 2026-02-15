@@ -6,6 +6,7 @@
  */
 package com.fbaron.ims.product.service;
 
+import com.fbaron.ims.product.exception.ProductNotFoundException;
 import com.fbaron.ims.product.model.Product;
 import com.fbaron.ims.product.repository.ProductCommandRepository;
 import com.fbaron.ims.product.repository.ProductQueryRepository;
@@ -34,7 +35,7 @@ public class ProductService implements RegisterProductUseCase, GetProductUseCase
     @Override
     public Product getById(Long id) {
         return productQueryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
 }

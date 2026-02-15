@@ -6,10 +6,12 @@
  */
 package com.fbaron.ims.product.dto;
 
+import java.math.BigDecimal;
+
 public record ProductDto(
         Long id,
         String name,
-        Double price,
+        BigDecimal price,
         String description,
         String category) {
 }

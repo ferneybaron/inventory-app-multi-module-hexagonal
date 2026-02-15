@@ -11,6 +11,7 @@ import com.fbaron.ims.product.dto.RegisterProductDto;
 import com.fbaron.ims.product.mapper.ProductDtoMapper;
 import com.fbaron.ims.product.usecase.GetProductUseCase;
 import com.fbaron.ims.product.usecase.RegisterProductUseCase;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class ProductRestAdapter {
     private final ProductDtoMapper productDtoMapper;
 
     @PostMapping
-    public ResponseEntity<ProductDto> registerProduct(@RequestBody RegisterProductDto dto) {
+    public ResponseEntity<ProductDto> registerProduct(@Valid @RequestBody RegisterProductDto dto) {
         var product = productDtoMapper.toModel(dto);
         var registeredProduct = registerProductUseCase.register(product);
         return ResponseEntity.status(HttpStatus.CREATED)
