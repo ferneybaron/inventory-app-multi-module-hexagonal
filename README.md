@@ -39,27 +39,50 @@ The project is divided into four strictly decoupled Gradle modules:
 
 ### Persistence Adapter Selection
 
-The datasource adapter is selected by `app.persistence.type`:
+The persistence adapter is selected by `app.persistence.type`:
 
 * `jpa` (default)
 * `jdbc`
 * `mongo`
+* `elasticsearch`
 
-Default behavior:
+The project uses only environment profiles:
 
-* If not set, `app.persistence.type` defaults to `jpa`.
-* `application-jdbc.yaml` sets it to `jdbc`.
-* `application-mongo.yaml` sets it to `mongo`.
+* `develop`
+* `release`
+* `prod`
 
-Recommended strategy with environment profiles (`develop`, `prod`, `release`):
+Datasource vendor is environment-driven (no vendor profile needed):
 
-* Keep environment as Spring profile.
-* Select persistence with `APP_PERSISTENCE_TYPE`.
+* `DATABASE_URL`
+* `DATABASE_DRIVER`
+* `DATABASE_USERNAME`
+* `DATABASE_PASSWORD`
+* Mongo URI (when `APP_PERSISTENCE_TYPE=mongo`) with precedence:
+  * `SPRING_DATA_MONGODB_URI`
+  * `MONGO_URI`
+  * `MONGO_USERNAME` + `MONGO_PASSWORD` + `MONGO_HOST` + `MONGO_PORT` + `MONGO_DATABASE` + `MONGO_AUTH_DB`
+* Elasticsearch (when `APP_PERSISTENCE_TYPE=elasticsearch`):
+  * `ELASTICSEARCH_URIS`
+  * `ELASTICSEARCH_USERNAME`
+  * `ELASTICSEARCH_PASSWORD`
+
+Adapter type is environment-driven:
+
+* `APP_PERSISTENCE_TYPE=jpa|jdbc|mongo`
 
 Examples:
 
-* Linux / macOS: `APP_PERSISTENCE_TYPE=jdbc ./gradlew :app-main:bootRun --args='--spring.profiles.active=develop'`
-* Linux / macOS: `APP_PERSISTENCE_TYPE=mongo ./gradlew :app-main:bootRun --args='--spring.profiles.active=prod'`
+* Develop + H2 + JPA:
+  `./gradlew :app-main:bootRun --args='--spring.profiles.active=develop'`
+* Release + PostgreSQL + JPA:
+  `DATABASE_URL='jdbc:postgresql://localhost:5432/inventorydb?currentSchema=public&ssl=false' DATABASE_DRIVER='org.postgresql.Driver' DATABASE_USERNAME='postgres' DATABASE_PASSWORD='my-secret-pw' APP_PERSISTENCE_TYPE='jpa' ./gradlew :app-main:bootRun --args='--spring.profiles.active=release'`
+* Prod + MySQL + JDBC adapter:
+  `DATABASE_URL='jdbc:mysql://localhost:3306/inventorydb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC' DATABASE_DRIVER='com.mysql.cj.jdbc.Driver' DATABASE_USERNAME='root' DATABASE_PASSWORD='rootpassword' APP_PERSISTENCE_TYPE='jdbc' ./gradlew :app-main:bootRun --args='--spring.profiles.active=prod'`
+* Prod + Mongo adapter:
+  `SPRING_DATA_MONGODB_URI='mongodb://root:my-secret-pw@localhost:27017/inventorydb?authSource=admin' APP_PERSISTENCE_TYPE='mongo' ./gradlew :app-main:bootRun --args='--spring.profiles.active=prod'`
+* Prod + Elasticsearch adapter:
+  `ELASTICSEARCH_URIS='http://localhost:9200' APP_PERSISTENCE_TYPE='elasticsearch' ./gradlew :app-main:bootRun --args='--spring.profiles.active=prod'`
 
 ### API Endpoints
 
